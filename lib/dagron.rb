@@ -20,5 +20,8 @@ module Dagron
   Database = Sequel.connect(config)
 end
 
+Sequel::Model.plugin :validation_helpers
+
 require "dagron/version"
+require "dagron/map"
 require "dagron/application"
