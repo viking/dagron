@@ -1,6 +1,7 @@
 # Dagron
 
-TODO: Write a gem description
+Dagron ([sic](http://www.urbandictionary.com/define.php?term=DAGRON)) is a
+Sinatra-based app for displaying TMX maps for tabletop games.
 
 ## Installation
 
