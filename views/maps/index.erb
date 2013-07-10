@@ -1,0 +1,22 @@
+<% @maps.each do |map| %>
+<div class="row">
+  <div class="4u"><a href="/maps/<%= map.id %>"><%= map.name %></a></div>
+  <div class="4u"><a href="/maps/<%= map.id %>/download">Download</a></div>
+  <div class="4u"><a href="/maps/<%= map.id %>/edit">Edit</a></div>
+</div>
+<% end %>
+
+<form action="/maps" method="post" enctype="multipart/form-data">
+  <h2>Upload map:</h2>
+  <div class="row">
+    <div class="1u">Name:</div>
+    <div class="11u"><input type="text" name="name" /></div>
+  </div>
+  <div class="row">
+    <div class="1u">File:</div>
+    <div class="11u"><input type="file" name="data" /></div>
+  </div>
+  <div class="row">
+    <div class="12u"><input type="submit" /></div>
+  </div>
+</form>
