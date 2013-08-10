@@ -43,5 +43,12 @@ module Dagron
         redirect "/maps/#{map.id}"
       end
     end
+
+    get "/maps/:map_id/images/:id" do
+      map = Map[:id => params[:map_id]]
+      image = map.images_dataset[:id => params[:id]]
+      content_type image.mime_type
+      image.data
+    end
   end
 end

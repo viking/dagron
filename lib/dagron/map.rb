@@ -1,5 +1,7 @@
 module Dagron
   class Map < Sequel::Model
+    one_to_many :images
+
     protected
 
     def validate

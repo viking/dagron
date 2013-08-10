@@ -31,6 +31,7 @@ class TestApplication < Test::Unit::TestCase
   test "map" do
     map = stub('map', :id => 1, :name => "Foo")
     Dagron::Map.expects(:[]).with(:id => "1").returns(map)
+    map.expects(:images).returns([stub('image', :id => 1, :name => 'foo')])
     get '/maps/1'
     assert last_response.ok?
   end
@@ -53,5 +54,20 @@ class TestApplication < Test::Unit::TestCase
     }
     assert last_response.redirect?
     assert_equal 'http://example.org/maps/1', last_response['location']
+  end
+
+  test "view image" do
+    map = stub('map', :id => 1, :name => "Foo")
+    Dagron::Map.expects(:[]).with(:id => "1").returns(map)
+
+    data = fixture_data('foo.png')
+    image = mock('image', :data => data, :mime_type => 'image/png')
+    map.expects(:images_dataset).returns(stub {
+      expects(:[]).with(:id => "1").returns(image)
+    })
+
+    get '/maps/1/images/1'
+    assert last_response.ok?
+    assert_equal data, last_response.body
   end
 end

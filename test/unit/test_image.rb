@@ -36,4 +36,9 @@ class TestImage < Test::Unit::TestCase
     image = new_image(:map_id => nil)
     assert !image.valid?
   end
+
+  test "mime_type for png" do
+    image = new_image
+    assert_equal "image/png", image.mime_type
+  end
 end
