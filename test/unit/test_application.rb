@@ -21,25 +21,37 @@ class TestApplication < Test::Unit::TestCase
   end
 
   test "create map" do
-    file = Tempfile.new('dagron')
-    file.puts("<map></map>")
-    file.flush
-    file.rewind
-    begin
-      map = mock('map', :valid? => true, :save => true)
-      Dagron::Map.expects(:new).with({
-        :name => 'foo',
-        :filename => File.basename(file.path),
-        :data => "<map></map>\n"
-      }).returns(map)
-      post '/maps', {
-        :name => 'foo',
-        :data => Rack::Test::UploadedFile.new(file, "text/xml")
-      }
-      assert last_response.redirect?
-      assert_equal 'http://example.org/maps', last_response['location']
-    ensure
-      file.unlink
-    end
+    map = mock('map', :valid? => true, :save => true)
+    Dagron::Map.expects(:new).with(:name => 'foo').returns(map)
+    post '/maps', :name => 'foo'
+    assert last_response.redirect?
+    assert_equal 'http://example.org/maps', last_response['location']
+  end
+
+  test "map" do
+    map = stub('map', :id => 1, :name => "Foo")
+    Dagron::Map.expects(:[]).with(:id => "1").returns(map)
+    get '/maps/1'
+    assert last_response.ok?
+  end
+
+  test "create image" do
+    map = stub('map', :id => 1, :name => "Foo")
+    Dagron::Map.expects(:[]).with(:id => "1").returns(map)
+
+    image = mock('image', :valid? => true, :save => true)
+    Dagron::Image.expects(:new).with({
+      :name => 'foo',
+      :filename => 'foo.png',
+      :data => fixture_data('foo.png'),
+      :map_id => 1
+    }).returns(image)
+
+    post '/maps/1/images', {
+      :name => 'foo',
+      :data => Rack::Test::UploadedFile.new(fixture_path('foo.png'), "image/png")
+    }
+    assert last_response.redirect?
+    assert_equal 'http://example.org/maps/1', last_response['location']
   end
 end

@@ -44,4 +44,15 @@ class Test::Unit::TestCase
     end
     result
   end
+
+  def fixture_path(name)
+    File.join(File.dirname(__FILE__), 'fixtures', name)
+  end
+
+  def fixture_data(name)
+    f = File.open(fixture_path(name), 'rb')
+    data = f.read
+    f.close
+    data
+  end
 end

@@ -24,4 +24,5 @@ Sequel::Model.plugin :validation_helpers
 
 require "dagron/version"
 require "dagron/map"
+require "dagron/image"
 require "dagron/application"

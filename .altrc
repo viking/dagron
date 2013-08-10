@@ -1,0 +1,4 @@
+[
+  ['^lib/dagron/\(\([^/]\+/\)*\)\(.\+\)\.rb$', 'test/unit/\1test_\3.rb'],
+  ['^test/unit/\(\([^/]\+/\)*\)test_\(.\+\)\+.rb$', 'lib/dagron/\1\3.rb']
+]

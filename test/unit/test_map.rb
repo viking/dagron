@@ -3,9 +3,7 @@ require 'helper'
 class TestMap < Test::Unit::TestCase
   def new_map(attribs = {})
     Dagron::Map.new({
-      :name => 'foo',
-      :filename => "foo.tmx",
-      :data => '<map></map>'
+      :name => 'foo'
     }.merge(attribs))
   end
 
@@ -19,15 +17,5 @@ class TestMap < Test::Unit::TestCase
     map_1.save
     map_2 = new_map(:name => 'Foo')
     assert !map_2.valid?
-  end
-
-  test "requires filename" do
-    map = new_map(:filename => nil)
-    assert !map.valid?
-  end
-
-  test "requires data" do
-    map = new_map(:data => nil)
-    assert !map.valid?
   end
 end

@@ -13,19 +13,34 @@ module Dagron
     end
 
     post "/maps" do
+      map = Map.new(:name => params[:name])
+      if map.valid?
+        map.save
+        redirect '/maps'
+      end
+    end
+
+    get "/maps/:id" do
+      @map = Map[:id => params[:id]]
+      erb :'maps/show'
+    end
+
+    post "/maps/:id/images" do
+      map = Map[:id => params[:id]]
+
       name = params[:name]
       filename = data = nil
       if params[:data].is_a?(Hash)
         filename = params[:data][:filename]
         data = params[:data][:tempfile].read
       end
-      map = Map.new({
+      image = Image.new({
         :name => params[:name], :filename => filename,
-        :data => data
+        :data => data, :map_id => map.id
       })
-      if map.valid?
-        map.save
-        redirect '/maps'
+      if image.valid?
+        image.save
+        redirect "/maps/#{map.id}"
       end
     end
   end

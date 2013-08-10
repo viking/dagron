@@ -1,11 +1,11 @@
 module Dagron
-  class Map < Sequel::Model
+  class Image < Sequel::Model
     protected
 
     def validate
       super
 
-      validates_presence :name
+      validates_presence [:name, :filename, :data, :map_id]
       validates_unique :name
     end
   end
