@@ -41,4 +41,11 @@ class TestImage < Test::Unit::TestCase
     image = new_image
     assert_equal "image/png", image.mime_type
   end
+
+  test "png dimensions" do
+    image = new_image(:filename => 'map-1.png', :data => fixture_data('map-1.png'))
+    image.save
+    assert_equal 398, image.width
+    assert_equal 211, image.height
+  end
 end
