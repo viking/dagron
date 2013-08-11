@@ -1,22 +1,65 @@
 <h1>Map: <%= @map.name %></h1>
 
-<% @map.images.each do |image| %>
-<div class="row">
-  <div class="4u"><a href="/maps/<%= @map.id %>/images/<%= image.id %>"><%= image.name %></a></div>
+<h2>Viewport</h2>
+<form action="/maps/<%= @map.id %>" method="post">
+  <p>
+    <label>W: <input class="map-viewport-w" type="text" name="map[viewport_w]" value="<%= @map.viewport_w %>" size="5" /></label>
+    <label>H: <input class="map-viewport-h" type="text" name="map[viewport_h]" value="<%= @map.viewport_h %>" size="5" /></label>
+  </p>
+  <p>
+    <label>X: <input class="map-viewport-x" type="text" name="map[viewport_x]" value="<%= @map.viewport_x %>" size="5" /></label>
+    <label>Y: <input class="map-viewport-y" type="text" name="map[viewport_y]" value="<%= @map.viewport_y %>" size="5" /></label>
+  </p>
+  <p>
+    <input type="submit" />
+  </p>
+</form>
+
+<h2>Preview</h2>
+<div class="map-preview" style="width: <%= @images.collect(&:width).max %>px; height: <%= @images.collect(&:height).max %>px;">
+  <% @images.each do |image| %>
+    <img src="/maps/<%= @map.id %>/images/<%= image.id %>" />
+  <% end %>
+  <div class="map-viewport" style="top: <%= @map.viewport_y %>px; left: <%= @map.viewport_x %>px; width: <%= @map.viewport_w %>px; height: <%= @map.viewport_h %>px;"></div>
 </div>
+
+<h2>Images</h2>
+<ul>
+<% @images.each do |image| %>
+  <li><a href="/maps/<%= @map.id %>/images/<%= image.id %>"><%= image.name %></a></li>
 <% end %>
+</ul>
 
 <form action="/maps/<%= @map.id %>/images" method="post" enctype="multipart/form-data">
-  <h2>Upload image:</h2>
-  <div class="row">
-    <div class="1u">Name:</div>
-    <div class="11u"><input type="text" name="name" /></div>
-  </div>
-  <div class="row">
-    <div class="1u">File:</div>
-    <div class="11u"><input type="file" name="data" /></div>
-  </div>
-  <div class="row">
-    <div class="12u"><input type="submit" /></div>
-  </div>
+  <h3>Upload image:</h3>
+  <p>
+    <label>Name: <input type="text" name="name" /></label>
+  </p>
+  <p>
+    <label>File: <input type="file" name="data" /></label>
+  </p>
+  <p>
+    <input type="submit" />
+  </p>
 </form>
+
+<script type="text/javascript">
+  $(function() {
+    $('.map-viewport').resizable({
+      containment: '.map-preview',
+      handles: 'n, e, s, w, ne, se, sw, nw',
+      resize: function(e, ui) {
+        $('.map-viewport-w').val(ui.size.width);
+        $('.map-viewport-h').val(ui.size.height);
+        $('.map-viewport-x').val(ui.position.left);
+        $('.map-viewport-y').val(ui.position.top);
+      }
+    }).draggable({
+      containment: '.map-preview',
+      drag: function(e, ui) {
+        $('.map-viewport-x').val(ui.position.left);
+        $('.map-viewport-y').val(ui.position.top);
+      }
+    });
+  });
+</script>

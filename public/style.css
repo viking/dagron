@@ -1,0 +1,15 @@
+.map-preview {
+  position: relative;
+}
+
+.map-preview img {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.map-preview .map-viewport {
+  position: absolute;
+  border: 2px dotted lightgreen;
+  z-index: 100;
+}

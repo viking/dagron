@@ -1,16 +1,17 @@
+<h1>Maps</h1>
+
+<ul>
 <% @maps.each do |map| %>
-<div class="row">
-  <div class="4u"><a href="/maps/<%= map.id %>"><%= map.name %></a></div>
-</div>
+  <li><a href="/maps/<%= map.id %>"><%= map.name %></a></li>
 <% end %>
+</ul>
 
 <form action="/maps" method="post">
   <h2>Create map:</h2>
-  <div class="row">
-    <div class="1u">Name:</div>
-    <div class="11u"><input type="text" name="name" /></div>
-  </div>
-  <div class="row">
-    <div class="12u"><input type="submit" /></div>
-  </div>
+  <p>
+    <label>Name: <input type="text" name="name" /></label>
+  </p>
+  <p>
+    <input type="submit" />
+  </p>
 </form>
