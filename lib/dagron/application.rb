@@ -22,7 +22,17 @@ module Dagron
 
     get "/maps/:id" do
       @map = Map[:id => params[:id]]
+      @images = @map.images
       erb :'maps/show'
+    end
+
+    post "/maps/:id" do
+      @map = Map[:id => params[:id]]
+      @map.set_only(params[:map], :viewport_x, :viewport_y, :viewport_w, :viewport_h)
+      if @map.valid?
+        @map.save
+        redirect "/maps/#{@map.id}"
+      end
     end
 
     post "/maps/:id/images" do
