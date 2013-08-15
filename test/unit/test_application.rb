@@ -91,4 +91,19 @@ class TestApplication < Test::Unit::TestCase
     assert last_response.ok?
     assert_equal data, last_response.body
   end
+
+  test "update image" do
+    map = stub('map', :id => 1, :name => "Foo")
+    Dagron::Map.expects(:[]).with(:id => "1").returns(map)
+
+    image = mock('image', :valid? => true, :save => true)
+    map.expects(:images_dataset).returns(stub {
+      expects(:[]).with(:id => "1").returns(image)
+    })
+    image.expects(:set_only).with({'visible' => 'false'}, :visible)
+
+    post '/maps/1/images/1', 'image' => {'visible' => 'false'}
+    assert last_response.redirect?
+    assert_equal 'http://example.org/maps/1', last_response['location']
+  end
 end

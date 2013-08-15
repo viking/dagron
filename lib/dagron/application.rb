@@ -60,5 +60,15 @@ module Dagron
       content_type image.mime_type
       image.data
     end
+
+    post "/maps/:map_id/images/:id" do
+      map = Map[:id => params[:map_id]]
+      image = map.images_dataset[:id => params[:id]]
+      image.set_only(params[:image], :visible)
+      if image.valid?
+        image.save
+        redirect "/maps/#{map.id}"
+      end
+    end
   end
 end
