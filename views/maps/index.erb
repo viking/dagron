@@ -2,7 +2,7 @@
 
 <ul>
 <% @maps.each do |map| %>
-  <li><a href="/maps/<%= map.id %>"><%= map.name %></a></li>
+  <li><a href="/maps/<%= map.id %>"><%= map.name %></a> [<a class="delete" href="/maps/<%= map.id %>/delete">delete</a>]</li>
 <% end %>
 </ul>
 
@@ -15,3 +15,16 @@
     <input type="submit" />
   </p>
 </form>
+
+<script type="text/javascript">
+  $(function() {
+    $('a.delete').click(function(e) {
+      e.preventDefault();
+      if (confirm("Are you sure?")) {
+        var form = $('<form method="post"></form>');
+        form.attr('action', $(this).attr('href'));
+        form.submit();
+      }
+    });
+  });
+</script>

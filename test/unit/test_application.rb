@@ -178,4 +178,13 @@ class TestApplication < Test::Unit::TestCase
     get '/maps/1/manage'
     assert last_response.ok?
   end
+
+  test "delete map" do
+    map = stub('map')
+    Dagron::Map.expects(:[]).with(:id => "1").returns(map)
+    map.expects(:destroy)
+    post '/maps/1/delete'
+    assert last_response.redirect?
+    assert_equal "http://example.org/maps", last_response['location']
+  end
 end

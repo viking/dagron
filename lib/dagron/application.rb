@@ -41,6 +41,12 @@ module Dagron
       end
     end
 
+    post "/maps/:id/delete" do
+      map = Map[:id => params[:id]]
+      map.destroy
+      redirect "/maps"
+    end
+
     post "/maps/:id/images" do
       map = Map[:id => params[:id]]
 
