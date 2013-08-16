@@ -1,6 +1,7 @@
 module Dagron
   class Map < Sequel::Model
     one_to_many :images
+    add_association_dependencies :images => :destroy
 
     protected
 

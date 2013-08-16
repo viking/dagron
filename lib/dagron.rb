@@ -25,6 +25,7 @@ end
 
 Sequel::Model.plugin :validation_helpers
 Sequel::Model.plugin :json_serializer
+Sequel::Model.plugin :association_dependencies
 
 require "dagron/version"
 require "dagron/map"
