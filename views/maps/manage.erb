@@ -1,6 +1,8 @@
 <h1>Manage: <%= @map.name %> [<a href="/maps/<%= @map.id %>/presentation">presentation</a>]</h1>
 
 <h2>Viewport</h2>
+<% max_width = @images.collect(&:width).max %>
+<% max_height = @images.collect(&:height).max %>
 <form class="map" action="/maps/<%= @map.id %>" method="post">
   <p>
     <label>W: <input class="map-viewport-w" type="text" name="map[viewport_w]" value="<%= @map.viewport_w %>" size="5" /></label>
@@ -13,7 +15,7 @@
 </form>
 
 <h2>Preview</h2>
-<div class="map-preview" style="width: <%= @images.collect(&:width).max %>px; height: <%= @images.collect(&:height).max %>px;">
+<div class="map-preview" style="width: <%= max_width %>px; height: <%= max_height %>px;">
   <% @images.each do |image| %>
     <img class="image-<%= image.id %>" src="/maps/<%= @map.id %>/images/<%= image.id %>" <%= 'style="display: none;"' if !image.visible %> />
   <% end %>
@@ -34,6 +36,33 @@
 <% end %>
 
 <script type="text/javascript">
+  var maxWidth = <%= max_width %>;
+  var maxHeight = <%= max_height %>;
+
+  function checkViewport() {
+    var width = $('.map-viewport-w').val();
+    var height = $('.map-viewport-h').val();
+    if (width > maxWidth) {
+      width = maxWidth;
+      $('.map-viewport-w').val(width);
+    }
+    if (height > maxHeight) {
+      height = maxHeight;
+      $('.map-viewport-h').val(height);
+    }
+
+    var x = $('.map-viewport-x').val();
+    var y = $('.map-viewport-y').val();
+    if ((x + width) > maxWidth) {
+      x = maxWidth - width;
+      $('.map-viewport-x').val(x);
+    }
+    if ((y + height) > maxHeight) {
+      y = maxHeight - height;
+      $('.map-viewport-y').val(y);
+    }
+  }
+
   $(function() {
     $('.map-viewport').resizable({
       containment: '.map-preview',
@@ -58,10 +87,13 @@
       }
     });
 
-    $('.map-viewport-x, .map-viewport-y').change(function(e) {
+    $('.map-viewport-x, .map-viewport-y, .map-viewport-w, .map-viewport-h').change(function(e) {
+      checkViewport();
       $('.map-viewport').
         css('top', $('.map-viewport-y').val() + 'px').
-        css('left', $('.map-viewport-x').val() + 'px');
+        css('left', $('.map-viewport-x').val() + 'px').
+        width($('.map-viewport-w').val() + 'px').
+        height($('.map-viewport-h').val() + 'px');
       $('form.map').submit();
     });
 
