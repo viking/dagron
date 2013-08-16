@@ -10,7 +10,7 @@
 <body style="overflow: hidden;">
 
 <div class="map-presentation">
-  <div class="map" style="margin-top: -<%= @map.viewport_y %>px; margin-left: -<%= @map.viewport_x %>px;">
+  <div class="map" style="margin-top: -<%= @map.viewport_y %>px; margin-left: -<%= @map.viewport_x %>px; width: <%= @images.collect(&:width).max %>px; height: <%= @images.collect(&:height).max %>px;">
     <% @images.each do |image| %>
       <img class="image-<%= image.id %>" src="/maps/<%= @map.id %>/images/<%= image.id %>" <%= 'style="display: none;"' if !image.visible %> />
     <% end %>

@@ -5,6 +5,7 @@ body {
 
 .map-preview {
   position: relative;
+  background-color: black;
 }
 
 .map-preview img {
@@ -26,6 +27,7 @@ body {
 
 .map-presentation .map {
   position: relative;
+  background-color: black;
 }
 
 .map-presentation .map img {
@@ -36,6 +38,8 @@ body {
 
 .map-presentation .mask {
   position: absolute;
+  top: 0;
+  left: 0;
   width: 10000px;
   height: 10000px;
   z-index: 1;

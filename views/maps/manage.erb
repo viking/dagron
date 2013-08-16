@@ -74,7 +74,7 @@
       e.preventDefault();
       var form = $(this);
       $.post(form.attr('action'), form.serialize(), function(data) {
-        if (form.hasClass('update-image')) {
+        if (form.hasClass('image')) {
           $('.image-' + data.image.id).toggle(data.image.visible);
         }
       });
