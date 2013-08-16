@@ -1,7 +1,7 @@
 <h1>Map: <%= @map.name %></h1>
 
 <h2>Viewport</h2>
-<form action="/maps/<%= @map.id %>" method="post">
+<form class="map" action="/maps/<%= @map.id %>" method="post">
   <p>
     <label>W: <input class="map-viewport-w" type="text" name="map[viewport_w]" value="<%= @map.viewport_w %>" size="5" /></label>
     <label>H: <input class="map-viewport-h" type="text" name="map[viewport_h]" value="<%= @map.viewport_h %>" size="5" /></label>
@@ -9,9 +9,6 @@
   <p>
     <label>X: <input class="map-viewport-x" type="text" name="map[viewport_x]" value="<%= @map.viewport_x %>" size="5" /></label>
     <label>Y: <input class="map-viewport-y" type="text" name="map[viewport_y]" value="<%= @map.viewport_y %>" size="5" /></label>
-  </p>
-  <p>
-    <input type="submit" />
   </p>
 </form>
 
@@ -24,11 +21,17 @@
 </div>
 
 <h2>Images</h2>
-<ul>
 <% @images.each do |image| %>
-  <li><a href="/maps/<%= @map.id %>/images/<%= image.id %>"><%= image.name %></a></li>
+  <div>
+    <form action="/maps/<%= @map.id %>/images/<%= image.id %>" method="post">
+      <input type="hidden" name="image[visible]" value="false" />
+      <label>
+        <input class="image-visibility" type="checkbox" name="image[visible]" value="true" <%= 'checked="checked"' if image.visible %> />
+        <a href="/maps/<%= @map.id %>/images/<%= image.id %>"><%= image.name %></a>
+      </label>
+    </form>
+  </div>
 <% end %>
-</ul>
 
 <form action="/maps/<%= @map.id %>/images" method="post" enctype="multipart/form-data">
   <h3>Upload image:</h3>
@@ -53,13 +56,35 @@
         $('.map-viewport-h').val(ui.size.height);
         $('.map-viewport-x').val(ui.position.left);
         $('.map-viewport-y').val(ui.position.top);
+      },
+      stop: function(e, ui) {
+        $('form.map').submit();
       }
     }).draggable({
       containment: '.map-preview',
       drag: function(e, ui) {
         $('.map-viewport-x').val(ui.position.left);
         $('.map-viewport-y').val(ui.position.top);
+      },
+      stop: function(e, ui) {
+        $('form.map').submit();
       }
+    });
+
+    $('.map-viewport-x, .map-viewport-y').change(function(e) {
+      $('.map-viewport').
+        css('top', $('.map-viewport-y').val() + 'px').
+        css('left', $('.map-viewport-x').val() + 'px');
+    });
+
+    $('.image-visibility').change(function(e) {
+      $(this).closest('form').submit();
+    });
+
+    $('form').submit(function(e) {
+      e.preventDefault();
+      var form = $(this);
+      $.post(form.attr('action'), form.serialize());
     });
   });
 </script>
