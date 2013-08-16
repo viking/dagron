@@ -16,10 +16,10 @@
 <form class="new-image" action="/maps/<%= @map.id %>/images" method="post" enctype="multipart/form-data">
   <h3>Upload image:</h3>
   <p>
-    <label>Name: <input type="text" name="name" /></label>
+    <label>Name: <input type="text" name="image[name]" /></label>
   </p>
   <p>
-    <label>File: <input type="file" name="data" /></label>
+    <label>File: <input type="file" name="image[data]" /></label>
   </p>
   <p>
     <input type="submit" />

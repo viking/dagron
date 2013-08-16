@@ -10,7 +10,8 @@ class TestApplication < Test::Unit::TestCase
 
   test "index" do
     get '/'
-    assert last_response.ok?
+    assert last_response.redirect?
+    assert_equal "http://example.org/maps", last_response['location']
   end
 
   test "maps index" do
@@ -21,22 +22,19 @@ class TestApplication < Test::Unit::TestCase
   end
 
   test "create map" do
-    map = mock('map', :valid? => true, :save => true)
-    Dagron::Map.expects(:new).with(:name => 'foo').returns(map)
-    post '/maps', :name => 'foo'
+    map = mock('map', :valid? => true, :save => true, :id => 1)
+    Dagron::Map.expects(:new).returns(map)
+    map.expects(:set_only).with({'name' => 'foo'}, :name)
+    post '/maps', 'map' => {'name' => 'foo'}
     assert last_response.redirect?
-    assert_equal 'http://example.org/maps', last_response['location']
+    assert_equal 'http://example.org/maps/1', last_response['location']
   end
 
   test "show map" do
-    map = stub('map', {
-      :id => 1, :name => "Foo",
-      :viewport_x => 100, :viewport_y => 100,
-      :viewport_w => 100, :viewport_h => 100,
-    })
+    map = stub('map', :id => 1, :name => "Foo")
     Dagron::Map.expects(:[]).with(:id => "1").returns(map)
     map.expects(:images).returns([
-      stub('image', :id => 1, :name => 'foo', :height => 123, :width => 123, :visible => true)
+      stub('image', :id => 1, :name => 'foo')
     ])
     get '/maps/1'
     assert last_response.ok?
@@ -87,7 +85,7 @@ class TestApplication < Test::Unit::TestCase
       :map_id => 1
     }).returns(image)
 
-    post '/maps/1/images', {
+    post '/maps/1/images', :image => {
       :name => 'foo',
       :data => Rack::Test::UploadedFile.new(fixture_path('foo.png'), "image/png")
     }

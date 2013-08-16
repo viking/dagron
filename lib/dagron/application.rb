@@ -4,7 +4,7 @@ module Dagron
     enable :reload_templates if development?
 
     get "/" do
-      erb :index
+      redirect "/maps"
     end
 
     get "/maps" do
@@ -13,10 +13,11 @@ module Dagron
     end
 
     post "/maps" do
-      map = Map.new(:name => params[:name])
+      map = Map.new
+      map.set_only(params[:map], :name)
       if map.valid?
         map.save
-        redirect '/maps'
+        redirect "/maps/#{map.id}"
       end
     end
 
@@ -43,14 +44,14 @@ module Dagron
     post "/maps/:id/images" do
       map = Map[:id => params[:id]]
 
-      name = params[:name]
+      attribs = params[:image]
       filename = data = nil
-      if params[:data].is_a?(Hash)
-        filename = params[:data][:filename]
-        data = params[:data][:tempfile].read
+      if attribs[:data].is_a?(Hash)
+        filename = attribs[:data][:filename]
+        data = attribs[:data][:tempfile].read
       end
       image = Image.new({
-        :name => params[:name], :filename => filename,
+        :name => attribs[:name], :filename => filename,
         :data => data, :map_id => map.id
       })
       if image.valid?
