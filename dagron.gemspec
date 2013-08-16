@@ -19,6 +19,7 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency 'sinatra'
   gem.add_dependency 'sequel'
+  gem.add_dependency 'json'
   gem.add_dependency 'tmx'
   gem.add_development_dependency 'bundler'
   gem.add_development_dependency 'rake'

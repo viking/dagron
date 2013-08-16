@@ -31,7 +31,12 @@ module Dagron
       @map.set_only(params[:map], :viewport_x, :viewport_y, :viewport_w, :viewport_h)
       if @map.valid?
         @map.save
-        redirect "/maps/#{@map.id}"
+        if request.xhr?
+          content_type 'application/json'
+          {'success' => true}.to_json
+        else
+          redirect "/maps/#{@map.id}"
+        end
       end
     end
 
@@ -67,7 +72,12 @@ module Dagron
       image.set_only(params[:image], :visible)
       if image.valid?
         image.save
-        redirect "/maps/#{map.id}"
+        if request.xhr?
+          content_type 'application/json'
+          {'success' => true}.to_json
+        else
+          redirect "/maps/#{map.id}"
+        end
       end
     end
   end

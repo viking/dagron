@@ -36,7 +36,7 @@ class TestApplication < Test::Unit::TestCase
     })
     Dagron::Map.expects(:[]).with(:id => "1").returns(map)
     map.expects(:images).returns([
-      stub('image', :id => 1, :name => 'foo', :height => 123, :width => 123)
+      stub('image', :id => 1, :name => 'foo', :height => 123, :width => 123, :visible => true)
     ])
     get '/maps/1'
     assert last_response.ok?
@@ -55,6 +55,22 @@ class TestApplication < Test::Unit::TestCase
     }
     assert last_response.redirect?
     assert_equal 'http://example.org/maps/1', last_response['location']
+  end
+
+  test "update map json" do
+    map = stub('map', :id => 1, :valid? => true, :save => true)
+    Dagron::Map.expects(:[]).with(:id => "1").returns(map)
+    map.expects(:set_only).with({
+      'viewport_x' => '123', 'viewport_y' => '123',
+      'viewport_w' => '123', 'viewport_h' => '123'
+    }, :viewport_x, :viewport_y, :viewport_w, :viewport_h)
+    xhr '/maps/1', :as => :post, 'map' => {
+      'viewport_x' => '123', 'viewport_y' => '123',
+      'viewport_w' => '123', 'viewport_h' => '123'
+    }
+    assert last_response.ok?
+    assert_equal 'application/json;charset=utf-8', last_response['content-type']
+    assert_equal({'success' => true}.to_json, last_response.body)
   end
 
   test "create image" do
@@ -105,5 +121,21 @@ class TestApplication < Test::Unit::TestCase
     post '/maps/1/images/1', 'image' => {'visible' => 'false'}
     assert last_response.redirect?
     assert_equal 'http://example.org/maps/1', last_response['location']
+  end
+
+  test "update image json" do
+    map = stub('map', :id => 1, :name => "Foo")
+    Dagron::Map.expects(:[]).with(:id => "1").returns(map)
+
+    image = mock('image', :valid? => true, :save => true)
+    map.expects(:images_dataset).returns(stub {
+      expects(:[]).with(:id => "1").returns(image)
+    })
+    image.expects(:set_only).with({'visible' => 'false'}, :visible)
+
+    xhr '/maps/1/images/1', :as => :post, 'image' => {'visible' => 'false'}
+    assert last_response.ok?
+    assert_equal 'application/json;charset=utf-8', last_response['content-type']
+    assert_equal({'success' => true}.to_json, last_response.body)
   end
 end

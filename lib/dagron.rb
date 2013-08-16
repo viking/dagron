@@ -4,6 +4,7 @@ require 'erb'
 require 'yaml'
 require 'pathname'
 require 'logger'
+require 'json'
 
 module Dagron
   Root = (Pathname.new(File.dirname(__FILE__)) + '..').expand_path
