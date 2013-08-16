@@ -5,4 +5,3 @@ test:
 development:
   adapter: sqlite
   database: <%= Dagron::Root %>/db/development.db
-  logger: _stderr_
