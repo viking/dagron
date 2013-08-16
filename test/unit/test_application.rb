@@ -166,4 +166,18 @@ class TestApplication < Test::Unit::TestCase
     assert_equal 'application/json;charset=utf-8', last_response['content-type']
     assert_equal '{"map":"foo","images":"bar"}', last_response.body
   end
+
+  test "manage map" do
+    map = stub('map', {
+      :id => 1, :name => "Foo",
+      :viewport_x => 100, :viewport_y => 100,
+      :viewport_w => 100, :viewport_h => 100,
+    })
+    Dagron::Map.expects(:[]).with(:id => "1").returns(map)
+    map.expects(:images).returns([
+      stub('image', :id => 1, :name => 'foo', :height => 123, :width => 123, :visible => true)
+    ])
+    get '/maps/1/manage'
+    assert last_response.ok?
+  end
 end

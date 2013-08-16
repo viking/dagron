@@ -81,6 +81,12 @@ module Dagron
       end
     end
 
+    get "/maps/:id/manage" do
+      @map = Map[:id => params[:id]]
+      @images = @map.images
+      erb :'maps/manage'
+    end
+
     get "/maps/:id/presentation" do
       @map = Map[:id => params[:id]]
       if request.xhr?

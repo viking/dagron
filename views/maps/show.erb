@@ -1,40 +1,17 @@
-<h1>Map: <%= @map.name %> [<a href="/maps/<%= @map.id %>/presentation">presentation</a>]</h1>
-  
-<p>
-</p>
+<h1>Map: <%= @map.name %></h1>
 
-<h2>Viewport</h2>
-<form class="update-map xhr" action="/maps/<%= @map.id %>" method="post">
-  <p>
-    <label>W: <input class="map-viewport-w" type="text" name="map[viewport_w]" value="<%= @map.viewport_w %>" size="5" /></label>
-    <label>H: <input class="map-viewport-h" type="text" name="map[viewport_h]" value="<%= @map.viewport_h %>" size="5" /></label>
-  </p>
-  <p>
-    <label>X: <input class="map-viewport-x" type="text" name="map[viewport_x]" value="<%= @map.viewport_x %>" size="5" /></label>
-    <label>Y: <input class="map-viewport-y" type="text" name="map[viewport_y]" value="<%= @map.viewport_y %>" size="5" /></label>
-  </p>
-</form>
-
-<h2>Preview</h2>
-<div class="map-preview" style="width: <%= @images.collect(&:width).max %>px; height: <%= @images.collect(&:height).max %>px;">
-  <% @images.each do |image| %>
-    <img class="image-<%= image.id %>" src="/maps/<%= @map.id %>/images/<%= image.id %>" <%= 'style="display: none;"' if !image.visible %> />
-  <% end %>
-  <div class="map-viewport" style="top: <%= @map.viewport_y %>px; left: <%= @map.viewport_x %>px; width: <%= @map.viewport_w %>px; height: <%= @map.viewport_h %>px;"></div>
-</div>
+<h2>Actions</h2>
+<ul>
+  <li><a href="/maps/<%= @map.id %>/manage">Manage</a></li>
+  <li><a href="/maps/<%= @map.id %>/presentation">Presentation</a></li>
+</ul>
 
 <h2>Images</h2>
+<ul>
 <% @images.each do |image| %>
-  <div>
-    <form class="update-image xhr" action="/maps/<%= @map.id %>/images/<%= image.id %>" method="post">
-      <input type="hidden" name="image[visible]" value="false" />
-      <label>
-        <input class="image-visibility" type="checkbox" name="image[visible]" value="true" <%= 'checked="checked"' if image.visible %> />
-        <a href="/maps/<%= @map.id %>/images/<%= image.id %>"><%= image.name %></a>
-      </label>
-    </form>
-  </div>
+  <li><a href="/maps/<%= @map.id %>/images/<%= image.id %>"><%= image.name %></a></li>
 <% end %>
+</ul>
 
 <form class="new-image" action="/maps/<%= @map.id %>/images" method="post" enctype="multipart/form-data">
   <h3>Upload image:</h3>
@@ -48,52 +25,3 @@
     <input type="submit" />
   </p>
 </form>
-
-<script type="text/javascript">
-  $(function() {
-    $('.map-viewport').resizable({
-      containment: '.map-preview',
-      handles: 'n, e, s, w, ne, se, sw, nw',
-      resize: function(e, ui) {
-        $('.map-viewport-w').val(ui.size.width);
-        $('.map-viewport-h').val(ui.size.height);
-        $('.map-viewport-x').val(ui.position.left);
-        $('.map-viewport-y').val(ui.position.top);
-      },
-      stop: function(e, ui) {
-        $('form.update-map').submit();
-      }
-    }).draggable({
-      containment: '.map-preview',
-      drag: function(e, ui) {
-        $('.map-viewport-x').val(ui.position.left);
-        $('.map-viewport-y').val(ui.position.top);
-      },
-      stop: function(e, ui) {
-        $('form.update-map').submit();
-      }
-    });
-
-    $('.map-viewport-x, .map-viewport-y').change(function(e) {
-      $('.map-viewport').
-        css('top', $('.map-viewport-y').val() + 'px').
-        css('left', $('.map-viewport-x').val() + 'px');
-      $('form.update-map').submit();
-    });
-
-    $('.image-visibility').change(function(e) {
-      var obj = $(this);
-      obj.closest('form.update-image').submit();
-    });
-
-    $('form.xhr').submit(function(e) {
-      e.preventDefault();
-      var form = $(this);
-      $.post(form.attr('action'), form.serialize(), function(data) {
-        if (form.hasClass('update-image')) {
-          $('.image-' + data.image.id).toggle(data.image.visible);
-        }
-      });
-    });
-  });
-</script>
