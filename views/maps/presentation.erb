@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Dagron</title>
+<link rel="stylesheet" type="text/css" href="/style.css" />
+<script type="text/javascript" src="/jquery.min.js"></script>
+</head>
+
+<body style="overflow: hidden;">
+
+<div class="map-presentation">
+  <div class="map" style="margin-top: -<%= @map.viewport_y %>px; margin-left: -<%= @map.viewport_x %>px;">
+    <% @images.each do |image| %>
+      <img class="image-<%= image.id %>" src="/maps/<%= @map.id %>/images/<%= image.id %>" <%= 'style="display: none;"' if !image.visible %> />
+    <% end %>
+  </div>
+  <div class="mask right" style="left: <%= @map.viewport_w %>px"></div>
+  <div class="mask bottom" style="top: <%= @map.viewport_h %>px"></div>
+</div>
+
+<script type="text/javascript">
+  var timeout = 1000;
+  function refreshMap() {
+    $.get('/maps/<%= @map.id %>/presentation', function(data) {
+      $('.map').
+        css('margin-top',  '-' + data.map.viewport_y + 'px').
+        css('margin-left', '-' + data.map.viewport_x + 'px');
+      $('.mask.right').css('left', data.map.viewport_w + 'px');
+      $('.mask.bottom').css('top', data.map.viewport_h + 'px');
+
+      $.each(data.images, function() {
+        $('.image-' + this.id).toggle(this.visible);
+      });
+
+      setTimeout(refreshMap, timeout);
+    });
+  }
+  $(function() {
+    setTimeout(refreshMap, 1000);
+  });
+</script>
+
+</body>
+
+</html>

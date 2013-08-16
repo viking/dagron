@@ -1,3 +1,8 @@
+body {
+  padding: 0;
+  margin: 10px;
+}
+
 .map-preview {
   position: relative;
 }
@@ -13,4 +18,26 @@
   border: 2px dotted lightgreen;
   z-index: 100;
   cursor: move;
+}
+
+.map-presentation {
+  margin: -10px;
+}
+
+.map-presentation .map {
+  position: relative;
+}
+
+.map-presentation .map img {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.map-presentation .mask {
+  position: absolute;
+  width: 10000px;
+  height: 10000px;
+  z-index: 1;
+  background: black;
 }

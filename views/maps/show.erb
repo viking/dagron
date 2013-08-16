@@ -1,4 +1,7 @@
-<h1>Map: <%= @map.name %></h1>
+<h1>Map: <%= @map.name %> [<a href="/maps/<%= @map.id %>/presentation">presentation</a>]</h1>
+  
+<p>
+</p>
 
 <h2>Viewport</h2>
 <form class="map" action="/maps/<%= @map.id %>" method="post">
@@ -75,6 +78,7 @@
       $('.map-viewport').
         css('top', $('.map-viewport-y').val() + 'px').
         css('left', $('.map-viewport-x').val() + 'px');
+      $(this).closest('form').submit();
     });
 
     $('.image-visibility').change(function(e) {

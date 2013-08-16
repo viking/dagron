@@ -80,5 +80,16 @@ module Dagron
         end
       end
     end
+
+    get "/maps/:id/presentation" do
+      @map = Map[:id => params[:id]]
+      if request.xhr?
+        content_type 'application/json'
+        "{\"map\":#{@map.to_json},\"images\":#{@map.images_dataset.to_json(:except => [:data])}}"
+      else
+        @images = @map.images
+        erb :'maps/presentation', :layout => false
+      end
+    end
   end
 end

@@ -141,4 +141,29 @@ class TestApplication < Test::Unit::TestCase
     assert_equal 'application/json;charset=utf-8', last_response['content-type']
     assert_equal({'image' => 'foo'}.to_json, last_response.body)
   end
+
+  test "map presentation mode" do
+    map = stub('map', {
+      :id => 1,
+      :viewport_x => 100, :viewport_y => 100,
+      :viewport_w => 100, :viewport_h => 100,
+    })
+    Dagron::Map.expects(:[]).with(:id => "1").returns(map)
+    image = stub('image', :id => 1, :visible => true)
+    map.expects(:images).returns([image])
+
+    get '/maps/1/presentation'
+    assert last_response.ok?
+  end
+
+  test "map presentation json" do
+    map = stub('map', :to_json => '"foo"')
+    Dagron::Map.expects(:[]).with(:id => "1").returns(map)
+    map.expects(:images_dataset).returns(mock(:to_json => '"bar"'))
+
+    xhr '/maps/1/presentation'
+    assert last_response.ok?
+    assert_equal 'application/json;charset=utf-8', last_response['content-type']
+    assert_equal '{"map":"foo","images":"bar"}', last_response.body
+  end
 end
