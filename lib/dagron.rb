@@ -13,12 +13,14 @@ module Dagron
   config_path = Root + 'config' + 'database.yml'
   config_tmpl = ERB.new(File.read(config_path))
   config_tmpl.filename = config_path.to_s
-  config = YAML.load(config_tmpl.result(binding))[Env]
-  if config['logger']
+  Config = YAML.load(config_tmpl.result(binding))
+
+  db_config = Config[Env]
+  if db_config['logger']
     file = config['logger']
-    config['logger'] = Logger.new(file == '_stderr_' ? STDERR : file)
+    db_config['logger'] = Logger.new(file == '_stderr_' ? STDERR : file)
   end
-  Database = Sequel.connect(config)
+  Database = Sequel.connect(db_config)
 end
 
 Sequel::Model.plugin :validation_helpers
