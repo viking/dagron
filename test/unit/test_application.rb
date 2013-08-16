@@ -187,4 +187,19 @@ class TestApplication < Test::Unit::TestCase
     assert last_response.redirect?
     assert_equal "http://example.org/maps", last_response['location']
   end
+
+  test "delete image" do
+    map = stub('map', :id => 1)
+    Dagron::Map.expects(:[]).with(:id => "1").returns(map)
+
+    image = stub('image')
+    map.expects(:images_dataset).returns(stub {
+      expects(:[]).with(:id => "1").returns(image)
+    })
+    image.expects(:destroy)
+
+    post '/maps/1/images/1/delete'
+    assert last_response.redirect?
+    assert_equal "http://example.org/maps/1", last_response['location']
+  end
 end

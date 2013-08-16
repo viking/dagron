@@ -88,6 +88,13 @@ module Dagron
       end
     end
 
+    post "/maps/:map_id/images/:id/delete" do
+      map = Map[:id => params[:map_id]]
+      image = map.images_dataset[:id => params[:id]]
+      image.destroy
+      redirect "/maps/#{map.id}"
+    end
+
     get "/maps/:id/manage" do
       @map = Map[:id => params[:id]]
       @images = @map.images

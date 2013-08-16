@@ -9,7 +9,7 @@
 <h2>Images</h2>
 <ul>
 <% @images.each do |image| %>
-  <li><a href="/maps/<%= @map.id %>/images/<%= image.id %>"><%= image.name %></a></li>
+  <li><a href="/maps/<%= @map.id %>/images/<%= image.id %>"><%= image.name %></a> [<a class="delete" href="/maps/<%= @map.id %>/images/<%= image.id %>/delete">delete</a>]</li>
 <% end %>
 </ul>
 
@@ -25,3 +25,16 @@
     <input type="submit" />
   </p>
 </form>
+
+<script type="text/javascript">
+  $(function() {
+    $('a.delete').click(function(e) {
+      e.preventDefault();
+      if (confirm("Are you sure?")) {
+        var form = $('<form method="post"></form>');
+        form.attr('action', $(this).attr('href'));
+        form.submit();
+      }
+    });
+  });
+</script>
