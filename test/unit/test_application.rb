@@ -116,9 +116,9 @@ class TestApplication < Test::Unit::TestCase
     map.expects(:images_dataset).returns(stub {
       expects(:[]).with(:id => "1").returns(image)
     })
-    image.expects(:set_only).with({'visible' => 'false'}, :visible)
+    image.expects(:set_only).with({'visible' => 'false', 'layer' => '5'}, :visible, :layer)
 
-    post '/maps/1/images/1', 'image' => {'visible' => 'false'}
+    post '/maps/1/images/1', 'image' => {'visible' => 'false', 'layer' => '5'}
     assert last_response.redirect?
     assert_equal 'http://example.org/maps/1', last_response['location']
   end
@@ -131,10 +131,10 @@ class TestApplication < Test::Unit::TestCase
     map.expects(:images_dataset).returns(stub {
       expects(:[]).with(:id => "1").returns(image)
     })
-    image.expects(:set_only).with({'visible' => 'false'}, :visible)
+    image.expects(:set_only).with({'visible' => 'false', 'layer' => '5'}, :visible, :layer)
     image.expects(:to_json).returns('"foo"')
 
-    xhr '/maps/1/images/1', :as => :post, 'image' => {'visible' => 'false'}
+    xhr '/maps/1/images/1', :as => :post, 'image' => {'visible' => 'false', 'layer' => '5'}
     assert last_response.ok?
     assert_equal 'application/json;charset=utf-8', last_response['content-type']
     assert_equal({'image' => 'foo'}.to_json, last_response.body)
@@ -147,7 +147,10 @@ class TestApplication < Test::Unit::TestCase
       :viewport_w => 100, :viewport_h => 100,
     })
     Dagron::Map.expects(:[]).with(:id => "1").returns(map)
-    image = stub('image', :id => 1, :visible => true)
+    image = stub('image', {
+      :id => 1, :width => 123, :height => 123,
+      :visible => true, :layer => 5
+    })
     map.expects(:images).returns([image])
 
     get '/maps/1/presentation'
@@ -172,9 +175,12 @@ class TestApplication < Test::Unit::TestCase
       :viewport_w => 100, :viewport_h => 100,
     })
     Dagron::Map.expects(:[]).with(:id => "1").returns(map)
-    map.expects(:images).returns([
-      stub('image', :id => 1, :name => 'foo', :height => 123, :width => 123, :visible => true)
-    ])
+    image = stub('image', {
+      :id => 1, :name => 'foo',
+      :height => 123, :width => 123,
+      :visible => true, :layer => 5
+    })
+    map.expects(:images).returns([image])
     get '/maps/1/manage'
     assert last_response.ok?
   end

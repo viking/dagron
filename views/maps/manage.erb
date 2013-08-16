@@ -17,23 +17,27 @@
 <h2>Preview</h2>
 <div class="map-preview" style="width: <%= max_width %>px; height: <%= max_height %>px;">
   <% @images.each do |image| %>
-    <img class="image-<%= image.id %>" src="/maps/<%= @map.id %>/images/<%= image.id %>" <%= 'style="display: none;"' if !image.visible %> />
+    <img class="image-<%= image.id %>" src="/maps/<%= @map.id %>/images/<%= image.id %>" style="z-index: <%= image.layer %>;<%= ' display: none;' if !image.visible %>" />
   <% end %>
   <div class="map-viewport" style="top: <%= @map.viewport_y %>px; left: <%= @map.viewport_x %>px; width: <%= @map.viewport_w %>px; height: <%= @map.viewport_h %>px;"></div>
 </div>
 
 <h2>Images</h2>
+<ul class="images">
 <% @images.each do |image| %>
-  <div>
+  <li data-id="<%= image.id %>">
+    <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
     <form class="image" action="/maps/<%= @map.id %>/images/<%= image.id %>" method="post">
+      <input class="image-layer" type="hidden" name="image[layer]" value="<%= image.layer %>" />
       <input type="hidden" name="image[visible]" value="false" />
       <label>
+        <span class="image-name"><%= image.name %></span>
         <input class="image-visibility" type="checkbox" name="image[visible]" value="true" <%= 'checked="checked"' if image.visible %> />
-        <a href="/maps/<%= @map.id %>/images/<%= image.id %>"><%= image.name %></a>
       </label>
     </form>
-  </div>
+  </li>
 <% end %>
+</ul>
 
 <script type="text/javascript">
   var maxWidth = <%= max_width %>;
@@ -87,6 +91,20 @@
       }
     });
 
+    $('ul.images').sortable({
+      stop: function(e, ui) {
+        $(this).find('li').each(function(i) {
+          var id = $(this).data('id');
+          var form = $(this).find('form');
+          var layer = form.find('.image-layer');
+          if (layer.val() != i) {
+            layer.val(i);
+            form.submit();
+          }
+        });
+      }
+    });
+
     $('.map-viewport-x, .map-viewport-y, .map-viewport-w, .map-viewport-h').change(function(e) {
       checkViewport();
       $('.map-viewport').
@@ -107,7 +125,9 @@
       var form = $(this);
       $.post(form.attr('action'), form.serialize(), function(data) {
         if (form.hasClass('image')) {
-          $('.image-' + data.image.id).toggle(data.image.visible);
+          $('img.image-' + data.image.id).
+            toggle(data.image.visible).
+            css('z-index', data.image.layer);
         }
       });
     });
