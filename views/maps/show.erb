@@ -15,7 +15,7 @@
 <h2>Preview</h2>
 <div class="map-preview" style="width: <%= @images.collect(&:width).max %>px; height: <%= @images.collect(&:height).max %>px;">
   <% @images.each do |image| %>
-    <img src="/maps/<%= @map.id %>/images/<%= image.id %>" />
+    <img class="image-<%= image.id %>" src="/maps/<%= @map.id %>/images/<%= image.id %>" <%= 'style="display: none;"' if !image.visible %> />
   <% end %>
   <div class="map-viewport" style="top: <%= @map.viewport_y %>px; left: <%= @map.viewport_x %>px; width: <%= @map.viewport_w %>px; height: <%= @map.viewport_h %>px;"></div>
 </div>
@@ -23,7 +23,7 @@
 <h2>Images</h2>
 <% @images.each do |image| %>
   <div>
-    <form action="/maps/<%= @map.id %>/images/<%= image.id %>" method="post">
+    <form class="image" action="/maps/<%= @map.id %>/images/<%= image.id %>" method="post">
       <input type="hidden" name="image[visible]" value="false" />
       <label>
         <input class="image-visibility" type="checkbox" name="image[visible]" value="true" <%= 'checked="checked"' if image.visible %> />
@@ -78,13 +78,18 @@
     });
 
     $('.image-visibility').change(function(e) {
-      $(this).closest('form').submit();
+      var obj = $(this);
+      obj.closest('form').submit();
     });
 
     $('form').submit(function(e) {
       e.preventDefault();
       var form = $(this);
-      $.post(form.attr('action'), form.serialize());
+      $.post(form.attr('action'), form.serialize(), function(data) {
+        if (form.hasClass('image')) {
+          $('.image-' + data.image.id).toggle(data.image.visible);
+        }
+      });
     });
   });
 </script>
