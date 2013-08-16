@@ -64,13 +64,15 @@ class TestApplication < Test::Unit::TestCase
       'viewport_x' => '123', 'viewport_y' => '123',
       'viewport_w' => '123', 'viewport_h' => '123'
     }, :viewport_x, :viewport_y, :viewport_w, :viewport_h)
+    map.expects(:to_json).returns('"foo"')
+
     xhr '/maps/1', :as => :post, 'map' => {
       'viewport_x' => '123', 'viewport_y' => '123',
       'viewport_w' => '123', 'viewport_h' => '123'
     }
     assert last_response.ok?
     assert_equal 'application/json;charset=utf-8', last_response['content-type']
-    assert_equal({'success' => true}.to_json, last_response.body)
+    assert_equal({'map' => "foo"}.to_json, last_response.body)
   end
 
   test "create image" do
@@ -132,10 +134,11 @@ class TestApplication < Test::Unit::TestCase
       expects(:[]).with(:id => "1").returns(image)
     })
     image.expects(:set_only).with({'visible' => 'false'}, :visible)
+    image.expects(:to_json).returns('"foo"')
 
     xhr '/maps/1/images/1', :as => :post, 'image' => {'visible' => 'false'}
     assert last_response.ok?
     assert_equal 'application/json;charset=utf-8', last_response['content-type']
-    assert_equal({'success' => true}.to_json, last_response.body)
+    assert_equal({'image' => 'foo'}.to_json, last_response.body)
   end
 end

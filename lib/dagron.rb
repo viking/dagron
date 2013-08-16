@@ -22,6 +22,7 @@ module Dagron
 end
 
 Sequel::Model.plugin :validation_helpers
+Sequel::Model.plugin :json_serializer
 
 require "dagron/version"
 require "dagron/map"
