@@ -97,7 +97,7 @@ module Dagron
 
     get "/maps/:id/manage" do
       @map = Map[:id => params[:id]]
-      @images = @map.images
+      @images = @map.images_dataset.order(:layer)
       erb :'maps/manage'
     end
 
